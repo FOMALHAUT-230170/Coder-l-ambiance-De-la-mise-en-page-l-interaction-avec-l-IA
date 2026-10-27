@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galerie de Produits Premium avec Panier</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6; --text-color: #1a1a1a; --card-bg: #ffffff;
+            --card-text-muted: #666666; --accent-color: #2563eb; --accent-hover: #1d4ed8;
+            --border-color: #e5e7eb; --shadow: 0 10px 15px -3px rgba(0,0,0,0.1); --transition-speed: 0.4s;
+        }
+        [data-theme="dark"] {
+            --bg-color: #0f172a; --text-color: #f8fafc; --card-bg: #1e293b;
+            --card-text-muted: #94a3b8; --accent-color: #3b82f6; --accent-hover: #60a5fa; --border-color: #334155;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: sans-serif; background-color: var(--bg-color); color: var(--text-color); padding: 2rem; transition: background var(--transition-speed), color var(--transition-speed); }
+        header { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto 3rem; }
+        .header-actions { display: flex; gap: 1rem; }
+        .theme-toggle, .cart-icon-btn, .action-btn, .buy-btn { background: var(--card-bg); border: 2px solid var(--border-color); color: var(--text-color); padding: 0.6rem 1.2rem; font-weight: 600; border-radius: 50px; cursor: pointer; transition: all 0.3s; }
+        .theme-toggle:hover, .cart-icon-btn:hover { transform: scale(1.05); border-color: var(--accent-color); }
+        .cart-badge { background: var(--accent-color); color: white; border-radius: 50%; padding: 0.1rem 0.5rem; font-size: 0.85rem; }
+        .main-layout { display: flex; flex-direction: column; gap: 3rem; max-width: 1200px; margin: 0 auto; }
+        .gallery-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; }
+        .product-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; opacity: 0; transform: translateY(30px); animation: fadeIn 0.6s ease forwards; }
+        .product-card:nth-child(1) { animation-delay: 0.1s; }
+        .product-card:nth-child(2) { animation-delay: 0.2s; }
+        .product-card:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+        .product-card:hover { transform: translateY(-5px); border-color: var(--accent-color); }
+        .product-image { height: 200px; background: linear-gradient(135deg, var(--accent-color), var(--border-color)); display: flex; align-items: center; justify-content: center; font-size: 4rem; }
+        .product-info { padding: 1.5rem; }
+        .product-title { margin-bottom: 0.5rem; }
+        .product-description { color: var(--card-text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+        .product-footer { display: flex; align-items: center; justify-content: space-between; }
+        .product-price { font-size: 1.3rem; font-weight: 700; color: var(--accent-color); }
+        .buy-btn, .action-btn { background: var(--accent-color); color: white; border: none; border-radius: 8px; }
+        .buy-btn:hover, .action-btn:hover { background: var(--accent-hover); }
+        .checkout-section { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 2rem; display: none; }
+        .cart-item { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px dashed var(--border-color); }
+        .cart-total { display: flex; justify-content: space-between; font-weight: bold; margin: 1.5rem 0; font-size: 1.2rem; }
+        .payment-form { display: none; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--border-color); }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        .form-group input, .form-group select { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Objets Connectés</h1>
+        <div class="header-actions">
+            <button class="cart-icon-btn" id="viewCartBtn">🛒 Panier <span class="cart-badge" id="cartCount">0</span></button>
+            <button class="theme-toggle" id="themeToggle">🌙 Mode Sombre</button>
+        </div>
+    </header>
+
+    <main class="main-layout">
+        <section class="gallery-container">
+            <article class="product-card" data-id="1" data-title="Casque Audio Pro" data-price="299">
+                <div class="product-image">🎧</div>
+                <div class="product-info">
+                    <h2 class="product-title">Casque Audio Pro</h2>
+                    <p class="product-description">Immersion totale avec réduction de bruit active de dernière génération.</p>
+                    <div class="product-footer">
+                        <span class="product-price">299 €</span>
+                        <button class="buy-btn add-to-cart">Acheter</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="product-card" data-id="2" data-title="Montre Sport X" data-price="199">
+                <div class="product-image">⌚</div>
+                <div class="product-info">
+                    <h2 class="product-title">Montre Sport X</h2>
+                    <p class="product-description">Suivez vos performances en temps réel avec une autonomie record de 14 jours.</p>
+                    <div class="product-footer">
+                        <span class="product-price">199 €</span>
+                        <button class="buy-btn add-to-cart">Acheter</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="product-card" data-id="3" data-title="Enceinte Rave" data-price="149">
+                <div class="product-image">🔈</div>
+                <div class="product-info">
+                    <h2 class="product-title">Enceinte Rave</h2>
+                    <p class="product-description">Un son puissant à 360 degrés, étanche et doté d'effets lumineux.</p>
+                    <div class="product-footer">
+                        <span class="product-price">149 €</span>
+                        <button class="buy-btn add-to-cart">Acheter</button>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="checkout-section" id="checkoutSection">
+            <h2>Votre Panier</h2>
+            <div id="cartItemsList">Votre panier est vide.</div>
+            <div class="cart-total"><span>Total :</span><span id="cartTotalAmount">0 €</span></div>
+            <button class="action-btn" id="validateCartBtn" style="width: 100%;">Valider le Panier</button>
+
+            <form class="payment-form" id="paymentForm">
+                <h2>Demande de Modalités de Paiement</h2>
+                <div class="form-group">
+                    <label for="fullName">Nom complet</label>
+                    <input type="text" id="fullName" required placeholder="Jean Dupont">
+                </div>
+                <div class="form-group">
+                    <label for="email">Adresse email</label>
+                    <input type="email" id="email" required placeholder="jean.dupont@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="paymentPlan">Modalité souhaitée</label>
+                    <select id="paymentPlan" required>
+                        <option value="Comptant">Comptant (1x sans frais)</option>
+                        <option value="3x">3x mensualités (Frais minimes)</option>
+                        <option value="4x">4x mensualités (Frais minimes)</option>
+                    </select>
+                </div>
+                <button type="submit" class="action-btn" style="width: 100%; background: #10b981;">Envoyer la demande</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        // --- THÈME ---
+        var toggleBtn = document.getElementById('themeToggle');
+        var savedTheme = localStorage.getItem('theme') || 'light';
+        var applyTheme = function(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            toggleBtn.textContent = theme === 'dark' ? '☀️ Mode Clair' : '🌙 Mode Sombre';
+        };
+        applyTheme(savedTheme);
+        toggleBtn.addEventListener('click', function() {
+            applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        });
+
+        // --- PANIER ---
+        var cart = [];
+        var countEl = document.getElementById('cartCount');
+        var section = document.getElementById('checkoutSection');
+        var listEl = document.getElementById('cartItemsList');
+        var totalEl = document.getElementById('cartTotalAmount');
+        var validBtn = document.getElementById('validateCartBtn');
+        var form = document.getElementById('paymentForm');
+
+        document.querySelectorAll('.add-to-cart').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                var card = e.target.closest('.product-card');
+                var id = card.getAttribute('data-id');
+                var title = card.getAttribute('data-title');
+                var price = parseInt(card.getAttribute('data-price'), 10);
+                
+                var item = cart.find(function(i) { return i.id === id; });
+                if (item) { item.quantity += 1; } else { cart.push({ id: id, title: title, price: price, quantity: 1 }); }
+                
+                updateUI();
+                section.style.display = 'block';
+                section.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+        function updateUI() {
+            countEl.textContent = cart.reduce(function(s, i) { return s + i.quantity; }, 0);
+            listEl.innerHTML = '';
+            var total = 0;
+            
+            if (cart.length === 0) {
+                listEl.innerHTML = 'Votre panier est vide.';
+                validBtn.style.display = 'none';
+            } else {
+                validBtn.style.display = 'block';
+                cart.forEach(function(item) {
+                    var sub = item.price * item.quantity;
+                    total += sub;
+                    var div = document.createElement('div');
+                    div.className = 'cart-item';
+                    div.innerHTML = '<span>' + item.title + ' (x' + item.quantity + ')</span><span>' + sub + ' €</span>';
+                    listEl.appendChild(div);
+                });
+            }
+            totalEl.textContent = total + ' €';
+        }
+
+        // Afficher ou masquer le panier au clic sur l'icône du header
+        document.getElementById('viewCartBtn').addEventListener('click', function() {
+            section.style.display = section.style.display === 'block' ? 'none' : 'block';
+            if (section.style.display === 'block') section.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Validation du panier pour afficher le formulaire de paiement
+        validBtn.addEventListener('click', function() {
+            if (cart.length > 0) {
+                form.style.display = 'block';
+                form.scrollIntoView({ behavior: 'smooth' });
+                validBtn.style.display = 'none';
+            }
+        });
+
+        // Soumission finale du formulaire de demande de paiement
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var name = document.getElementById('fullName').value;
+            var plan = document.getElementById('paymentPlan').value;
+            
+            alert('Merci ' + name + ' ! Votre demande de paiement en [' + plan + '] pour un montant de ' + totalEl.textContent + ' a bien été enregistrée.');
+            
+            // Remise à zéro complète après validation
+            cart = [];
+            updateUI();
+            form.reset();
+            form.style.display = 'none';
+            section.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
+
